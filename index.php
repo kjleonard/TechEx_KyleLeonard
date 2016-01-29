@@ -1,30 +1,45 @@
+<?php
+/*
+if($_SERVER["HTTPS"] != "on")
+{
+    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+    exit();
+}
+*/
+$loggedIn = isset($_COOKIE['userID']);
+include "db.inc.php";
+
+$userID = $_COOKIE['userID'];
+if ($loggedIn) {
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    } 
+
+    //Welcome the user
+    $req = "SELECT * FROM `Users` WHERE `ID` = $userID";
+    $result = $conn->query($req);
+    $conn -> close();
+
+    if ($result->num_rows > 0) {
+        // output data of each row
+        $row = $result->fetch_assoc();
+        echo "<div class=\"alert alert-info\" role=\"alert\"><span>" . "<div align=\"left\">Welcome " . $row['firstName'] . " " . $row['lastName'] . '</div><div align="right"><a href="./logout.php">Log Out</a></div></span></div>';
+    }
+} else {
+    echo '<meta http-equiv="refresh" content="0;URL=\'login.php\'" />';
+}
+?>
+
 <html>
+
 <head>
-<script src="lib/js/angular.js"></script>
-<script src="lib/js/jquery-1.12.0.js"></script>
-
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <title>Hello World</title>
+<title>Home</title>
+    <script src="lib/js/jquery-2.2.0.js"></script>
+    <script src="lib/js/angular.js"></script>
+    <script src="lib/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="lib/css/bootstrap.css"/>
+    <link rel="stylesheet" href="lib/css/bootstrap-theme.css"/>
 </head>
-
-<body ng-app=>
-     TEST 1: <p>Hello World - HTML</p>
-    <div ng-init="$scope.disp = true">
-        TEST 2: {{$scope.disp}} - > True will display if Angular is working
-    </div>
-    TEST 3: <div class="alert alert-success" role="alert">Bootstrap is working if I am green!</div>
-    
-    TEST 4: <?php echo "Hello World - PHP is working"; ?>
-    
-    <br />
-    <p> There should be 4 tests working... if there are not four outputs above something is not configured correctly... </p>
-</body>
-
 </html>
