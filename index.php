@@ -25,7 +25,7 @@ if ($loggedIn) {
     if ($result->num_rows > 0) {
         // output data of each row
         $row = $result->fetch_assoc();
-        echo "<div class=\"alert alert-info\" role=\"alert\"><span>" . "<div align=\"left\">Welcome " . $row['firstName'] . " " . $row['lastName'] . '</div><div align="right"><a href="./logout.php">Log Out</a></div></span></div>';
+        echo "<div class=\"alert alert-info\" role=\"alert\"><span>" . "<div align=\"left\">Welcome " . $row['firstName'] . " " . $row['lastName'] . '</div><div align="right"><a href="./profile.php">Profile</a> | <a href="./logout.php">Log Out</a></div></span></div>';
     }
 } else {
     echo '<meta http-equiv="refresh" content="0;URL=\'login.php\'" />';
@@ -121,6 +121,8 @@ $conn -> close();
             
             echo "<br /> <br /> Address <br />";
             echo $row['Street'] . "<br />" . $row['City'] . ", " . $row['State'] . " " . $row['Zip'] . "<br />" . $row['Country'];
+            echo "<br /> <br />";
+            echo "<a href=\"./updateContact.php?contactID=" . $row['ID'] . "\"><button class=\"btn btn-primary\">Update Contact</button></a>";
             
         }
       1

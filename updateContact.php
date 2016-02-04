@@ -30,10 +30,9 @@ if ($loggedIn) {
 } else {
     echo '<meta http-equiv="refresh" content="0;URL=\'login.php\'" />';
 }
-
-if($_POST['fName'] != null){    
-    //First/Last Name
-    $fName = $_POST['fName'];
+if($_POST['fName'])
+{
+$fName = $_POST['fName'];
     $lName = $_POST['lName'];
     
     //Email
@@ -58,13 +57,9 @@ if($_POST['fName'] != null){
     
     //Owner ID
     $ownerID = $_COOKIE['userID'];
+
     
-    $SQL_STR = "INSERT INTO `Contacts`(`OwnerID`, `FirstName`, `LastName`, `Email`, ";
-    $SQL_STR = $SQL_STR . "`Street`, `City`, `State`, `Zip`, `Country`, `HomePhone`, `CellPhone`, `BusinessPhone`, ";
-    $SQL_STR = $SQL_STR . "`Fax`, `Gender`, `Birthday`) VALUES ";
-    $SQL_STR = $SQL_STR . "($ownerID, \"$fName\",\"$lName\",\"$email\",\"$street\",\"$city\",";
-    $SQL_STR = $SQL_STR . "\"$state\",\"$zip\",\"$country\",\"$phone\",\"$cell\",\"$work\"";
-    $SQL_STR = $SQL_STR . ",\"$fax\",\"$gender\",\"$bday\")";
+    $SQL_STR = "UPDATE `Contacts` SET `FirstName`=\"$fName\",`LastName`=\"$lName\",`Email`=\"$email\",`Street`=\"$street\",`City`=\"$city\",`State`=\"$state\",`Zip`=\"$zip\",`Country`=\"$country\",`HomePhone`=\"$phone\",`CellPhone`=\"$cell\",`BusinessPhone`=\"$work\",`Fax`=\"$fax\",`Gender`=\"$gender\",`Birthday`=\"$bday\" WHERE `ID` =" . $_REQUEST['contactID'];
     
     
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -73,10 +68,51 @@ if($_POST['fName'] != null){
         die("Connection failed: " . $conn->connect_error);
     } 
 
-    //Add the quiz
+    //Update
     $req = $SQL_STR;
     $result = $conn->query($req);
     $conn -> close();
+
+    
+}else if($_REQUEST['contactID'] != null){
+    $contactID = $_REQUEST['contactID'];
+    $req = "SELECT * FROM `Contacts` WHERE `ID` = '$contactID'";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    } 
+    $result = $conn->query($req);
+    $conn -> close();
+    $row = $result->fetch_assoc();
+    //First/Last Name
+    $fName = $row['FirstName'];
+    $lName = $row['LastName'];
+
+    //Email
+    $email = $row['Email'];
+    
+    //Address, City, State, Zip, Country
+    $street =  $row['Street'];
+    $city =  $row['City'];
+    $state =   $row['State'];
+    $zip =  $row['Zip'];
+    $country =  $row['Country'];
+    
+    //Phones Cell, Fax, Business
+    $cell = $row['CellPhone'];
+    $phone = $row['HomePhone'];
+    $fax = $row['Fax'];
+    $work = $row['BusinessPhone'];
+    
+    //Gender Birthday
+    $gender = $row['Gender'];
+    $bday = $row['Birthday'];
+    
+    //Owner ID
+    $ownerID = $_COOKIE['userID'];
+    
+ 
 
 }
 
@@ -95,17 +131,17 @@ if($_POST['fName'] != null){
     </head>
     
     <body>
-        <form class="form-horizontal" method="post" action="./newContact.php">
+        <form class="form-horizontal" method="post" action="./updateContact.php">
         <fieldset>
 
         <!-- Form Name -->
-        <legend>New Contact</legend>
+        <legend>Update Contact</legend>
 
         <!-- Text input-->
         <div class="form-group">
           <label class="col-md-4 control-label" for="fName">First Name</label>  
           <div class="col-md-4">
-          <input id="fName" name="fName" type="text" placeholder="John" class="form-control input-md" required="">
+          <input id="fName" name="fName" value="<?php echo $fName;?>" type="text" placeholder="John" class="form-control input-md" required="">
 
           </div>
         </div>
@@ -114,7 +150,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="lName">Last Name</label>  
           <div class="col-md-4">
-          <input id="lName" name="lName" type="text" placeholder="Doe" class="form-control input-md">
+          <input id="lName" name="lName" value="<?php echo $lName;?>" type="text" placeholder="Doe" class="form-control input-md">
 
           </div>
         </div>
@@ -122,7 +158,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="bday">Birthday</label>  
           <div class="col-md-4">
-          <input id="bday" name="bday" type="text" placeholder="02/28/2015" class="form-control input-md">
+          <input id="bday" name="bday" value="<?php echo $bday;?>" type="text" placeholder="02/28/2015" class="form-control input-md">
 
           </div>
         </div>
@@ -131,7 +167,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="gender">Gender</label>
           <div class="col-md-2">
-            <select id="gender" name="gender" class="form-control">
+            <select id="gender" name="gender" value="<?php echo $gender;?>"class="form-control">
               <option value="m">Male</option>
               <option value="f">Female</option>
               <option value="o">Other</option>
@@ -143,7 +179,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="email">Email</label>  
           <div class="col-md-4">
-          <input id="email" name="email" type="text" placeholder="john.doe@gmail.com" class="form-control input-md">
+          <input id="email" name="email" value="<?php echo $email;?>" type="text" placeholder="john.doe@gmail.com" class="form-control input-md">
 
           </div>
         </div>
@@ -152,7 +188,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="street">Street Address</label>  
           <div class="col-md-4">
-          <input id="street" name="street" type="text" placeholder="1234 main rd" class="form-control input-md">
+          <input id="street" name="street" type="text" value="<?php echo $street;?>" placeholder="1234 main rd" class="form-control input-md">
 
           </div>
         </div>
@@ -161,7 +197,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="city">City</label>  
           <div class="col-md-4">
-          <input id="city" name="city" type="text" placeholder="Omaha" class="form-control input-md">
+          <input id="city" name="city" type="text" value="<?php echo $city;?>" placeholder="Omaha" class="form-control input-md">
 
           </div>
         </div>
@@ -170,7 +206,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="state">State</label>  
           <div class="col-md-2">
-          <input id="state" name="state" type="text" placeholder="NE" class="form-control input-md">
+          <input id="state" name="state" type="text" value="<?php echo $state;?>" placeholder="NE" class="form-control input-md">
 
           </div>
         </div>
@@ -179,7 +215,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="Zip">Zip</label>  
           <div class="col-md-2">
-          <input id="Zip" name="Zip" type="text" placeholder="68145" class="form-control input-md">
+          <input id="Zip" name="Zip" type="text" value="<?php echo $zip;?>" placeholder="68145" class="form-control input-md">
 
           </div>
         </div>
@@ -188,7 +224,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="country">Country</label>  
           <div class="col-md-4">
-          <input id="country" name="country" type="text" placeholder="USA" class="form-control input-md">
+          <input id="country" name="country" type="text" value="<?php echo $country;?>" placeholder="USA" class="form-control input-md">
 
           </div>
         </div>
@@ -197,7 +233,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="cPhone">Cell Phone</label>  
           <div class="col-md-4">
-          <input id="cPhone" name="cPhone" type="text" placeholder="402-888-8999" class="form-control input-md">
+          <input id="cPhone" name="cPhone" type="text" value="<?php echo $cell;?>" placeholder="402-888-8999" class="form-control input-md">
 
           </div>
         </div>
@@ -206,7 +242,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="hPhone">Home Phone</label>  
           <div class="col-md-4">
-          <input id="hPhone" name="hPhone" type="text" placeholder="402-888-9888" class="form-control input-md">
+          <input id="hPhone" name="hPhone" type="text" value="<?php echo $phone;?>" placeholder="402-888-9888" class="form-control input-md">
 
           </div>
         </div>
@@ -215,17 +251,24 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="fax">Fax</label>  
           <div class="col-md-4">
-          <input id="fax" name="fax" type="text" placeholder="402-999-8999" class="form-control input-md">
+          <input id="fax" name="fax" type="text" placeholder="402-999-8999" value="<?php echo $fax;?>" class="form-control input-md">
 
           </div>
         </div>
             
-                    <!-- Text input-->
+         <!-- Text input-->
         <div class="form-group">
           <label class="col-md-4 control-label" for="wPhone">Work Phone</label>  
           <div class="col-md-4">
-          <input id="wPhone" name="wPhone" type="text" placeholder="402-999-8999" class="form-control input-md">
+          <input id="wPhone" name="wPhone" type="text" value="<?php echo $work;?>" placeholder="402-999-8999" class="form-control input-md">
 
+          </div>
+        </div>
+        
+        <!-- Text input-->
+        <div class="form-group"> 
+          <div class="col-md-4">
+          <input id="contactID" name="contactID" type="hidden" value="<?php echo $_REQUEST['contactID'];?>" class="form-control input-md">
           </div>
         </div>
 
@@ -233,7 +276,7 @@ if($_POST['fName'] != null){
         <div class="form-group">
           <label class="col-md-4 control-label" for="add"></label>
           <div class="col-md-4">
-            <button id="add" name="add" class="btn btn-success">Add Contact</button>
+            <button id="add" name="add" class="btn btn-success">Update Contact</button>
           </div>
         </div>
 

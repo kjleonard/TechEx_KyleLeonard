@@ -37,7 +37,7 @@ if ($email != '' && subPass != '') {
 	    setCookie('userID', $row['ID'], time() + 86400, '/');
 	    echo '<meta http-equiv="refresh" content="0;URL=\'index.php\'" />';
 	} else {
-	    echo "Username/Password is incorrect.";
+	    echo "<div class=\"alert alert-danger\" role=\"alert\">Username/Password is incorrect.</div>";
 	}
     } else {
         echo "<div class=\"alert alert-danger\" role=\"alert\">Username/Password is incorrect.</div>";
